@@ -13,7 +13,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://natalias-kitchen-frontend-wel9.vercel.app",
+      "https://natalias-kitchen-frontend.vercel.app",
     ],
     credentials: true,
   })
