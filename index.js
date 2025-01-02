@@ -15,10 +15,12 @@ app.use(
       "http://localhost:5173",
       "https://natalias-kitchen-frontend.vercel.app",
     ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
+app.options("*", cors());
 
 // MongoDB connection
 async function main() {
