@@ -31,7 +31,10 @@ async function main() {
 }
 
 // Firebase Admin SDK initialization using the environment variable
-const serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_SDK); // Parsing the environment variable JSON
+const serviceAccount = require(path.join(
+  __dirname,
+  "config/firebase-adminsdk.json"
+));
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -48,6 +51,7 @@ app.use("/api/auth", userRoutes);
 app.use("/api/upload", imgUploadRoute);
 
 // Delete user route
+
 app.delete("/delete-user/:uid", async (req, res) => {
   const uid = req.params.uid;
 
