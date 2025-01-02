@@ -50,27 +50,27 @@ async function main() {
 // Start server
 
 // Inicijalizacija Firebase Admin SDK
-const serviceAccount = require("../adminSDKfirebase.json"); // Putanja do preuzetog JSON fajla
+// const serviceAccount = require("../adminSDKfirebase.json"); // Putanja do preuzetog JSON fajla
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+// });
 
-// Middleware za parsiranje JSON-a
+// // Middleware za parsiranje JSON-a
 
-// Ruta za brisanje korisnika
-app.delete("/delete-user/:uid", async (req, res) => {
-  const uid = req.params.uid;
+// // Ruta za brisanje korisnika
+// app.delete("/delete-user/:uid", async (req, res) => {
+//   const uid = req.params.uid;
 
-  try {
-    // Poziva funkciju za brisanje korisnika iz Firebase Auth
-    await admin.auth().deleteUser(uid);
-    res.status(200).send(`Korisnik sa UID ${uid} je uspešno obrisan.`);
-  } catch (error) {
-    console.error("Greška pri brisanju korisnika:", error);
-    res.status(500).send("Greška pri brisanju korisnika");
-  }
-});
+//   try {
+//     // Poziva funkciju za brisanje korisnika iz Firebase Auth
+//     await admin.auth().deleteUser(uid);
+//     res.status(200).send(`Korisnik sa UID ${uid} je uspešno obrisan.`);
+//   } catch (error) {
+//     console.error("Greška pri brisanju korisnika:", error);
+//     res.status(500).send("Greška pri brisanju korisnika");
+//   }
+// });
 
 main();
 app.listen(port, () => {
