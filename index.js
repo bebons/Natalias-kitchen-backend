@@ -67,6 +67,10 @@ app.use("/api/upload", imgUploadRoute);
 
 main();
 
+app.get("/", (req, res) => {
+  res.send("Just do it king");
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });
