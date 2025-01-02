@@ -46,10 +46,10 @@ const foodRoutes = require("./src/food/food.router");
 const orderRoutes = require("./src/orders/order.route");
 const userRoutes = require("./src/users/user.route");
 const imgUploadRoute = require("./src/imgUpload/img.route");
-app.use("api/food", foodRoutes);
-app.use("api/orders", orderRoutes);
-app.use("api/auth", userRoutes);
-app.use("api/upload", imgUploadRoute);
+app.use("/api/food", foodRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/auth", userRoutes);
+app.use("/api/upload", imgUploadRoute);
 
 // Delete user route
 
