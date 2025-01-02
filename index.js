@@ -31,14 +31,14 @@ async function main() {
 }
 
 // Firebase Admin SDK initialization using the environment variable
-const serviceAccount = require(path.join(
-  __dirname,
-  "./config/firebase-adminsdk.json"
-));
+// const serviceAccount = require(path.join(
+//   __dirname,
+//   "./config/firebase-adminsdk.json"
+// ));
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+// });
 
 // Routes
 const foodRoutes = require("./src/food/food.router");
@@ -52,18 +52,18 @@ app.use("/api/upload", imgUploadRoute);
 
 // Delete user route
 
-app.delete("/delete-user/:uid", async (req, res) => {
-  const uid = req.params.uid;
+// app.delete("/delete-user/:uid", async (req, res) => {
+//   const uid = req.params.uid;
 
-  try {
-    // Delete user from Firebase Auth
-    await admin.auth().deleteUser(uid);
-    res.status(200).send(`User with UID ${uid} has been successfully deleted.`);
-  } catch (error) {
-    console.error("Error deleting user:", error);
-    res.status(500).send("Error deleting user");
-  }
-});
+//   try {
+//     // Delete user from Firebase Auth
+//     await admin.auth().deleteUser(uid);
+//     res.status(200).send(`User with UID ${uid} has been successfully deleted.`);
+//   } catch (error) {
+//     console.error("Error deleting user:", error);
+//     res.status(500).send("Error deleting user");
+//   }
+// });
 
 main();
 
