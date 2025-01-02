@@ -33,7 +33,7 @@ async function main() {
 // Firebase Admin SDK initialization using the environment variable
 const serviceAccount = require(path.join(
   __dirname,
-  "config/firebase-adminsdk.json"
+  "./config/firebase-adminsdk.json"
 ));
 
 admin.initializeApp({
