@@ -16,20 +16,16 @@ app.use(
       "https://natalias-kitchen-frontend.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: [
+      "Access-Control-Allow-Origin",
+      "Content-Type",
+      "Authorization",
+    ],
     credentials: true,
   })
 );
 app.options("*", cors());
-app.use((req, res, next) => {
-  res.header(
-    "Access-Control-Allow-Origin",
-    "https://natalias-kitchen-frontend.vercel.app"
-  ); // Dodaj domen sa kog šalješ zahtev
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
+
 // MongoDB connection
 async function main() {
   try {
