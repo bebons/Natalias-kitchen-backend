@@ -16,11 +16,7 @@ app.use(
       "https://natalias-kitchen-frontend.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: [
-      "Access-Control-Allow-Origin",
-      "Content-Type",
-      "Authorization",
-    ],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
