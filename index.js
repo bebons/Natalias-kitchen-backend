@@ -34,39 +34,76 @@ async function main() {
 }
 
 // Firebase Admin SDK initialization using the environment variable
-// const serviceAccount = require(path.join(
-//   __dirname,
-//   "./config/firebase-adminsdk.json"
-// ));
-
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-// });
 
 // Routes
 const foodRoutes = require("./src/food/food.router");
 const orderRoutes = require("./src/orders/order.route");
 const userRoutes = require("./src/users/user.route");
 const imgUploadRoute = require("./src/imgUpload/img.route");
+const { User } = require("./src/users/user.model");
 app.use("/api/food", foodRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/api/upload", imgUploadRoute);
 
 // Delete user route
+const serviceAccount = require(path.join(
+  __dirname,
+  "./config/firebase-adminsdk.json"
+));
 
-// app.delete("/delete-user/:uid", async (req, res) => {
-//   const uid = req.params.uid;
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
+app.delete("/delete-user/:uid", async (req, res) => {
+  const uid = req.params.uid;
+
+  try {
+    // Delete user from Firebase Auth
+    const user = await admin.auth().getUser(uid);
+    const email = user.email;
+
+    await admin.auth().deleteUser(uid);
+
+    await User.deleteOne({ email: email });
+
+    res
+      .status(200)
+      .send(
+        `User with UID ${uid} and EMAIL ${email} has been successfully deleted.`
+      );
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).send("Error deleting user");
+  }
+});
+
+// async function deleteAllUsers() {
 //   try {
-//     // Delete user from Firebase Auth
-//     await admin.auth().deleteUser(uid);
-//     res.status(200).send(`User with UID ${uid} has been successfully deleted.`);
+//     // Dohvata do 1000 korisnika u jednom pozivu
+//     const listUsersResult = await admin.auth().listUsers(1000);
+//     const userIds = listUsersResult.users.map((user) => user.uid);
+
+//     if (userIds.length > 0) {
+//       // Brisanje korisnika
+//       await admin.auth().deleteUsers(userIds);
+//       console.log(`${userIds.length} korisnika uspešno obrisano.`);
+//     } else {
+//       console.log("Nema korisnika za brisanje.");
+//     }
+
+//     // Rekurzivni poziv ako ima više korisnika
+//     if (listUsersResult.pageToken) {
+//       deleteAllUsers(listUsersResult.pageToken);
+//     }
 //   } catch (error) {
-//     console.error("Error deleting user:", error);
-//     res.status(500).send("Error deleting user");
+//     console.error("Greška prilikom brisanja korisnika:", error);
 //   }
-// });
+// }
+
+// // Pozivanje funkcije
+// deleteAllUsers();
 
 main();
 
