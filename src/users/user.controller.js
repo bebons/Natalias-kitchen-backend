@@ -35,31 +35,39 @@ const adminLogin = async (req, res) => {
     res.status(401).send({ message: "couldnt login as an admin" });
   }
 };
-//***************ovo firebase proverava */
 
-// const loginUser = async (req, res) => {
-//   const { email, password } = req.body;
+const checkUserExistence = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).send({ message: "User doesnt exist" });
+    }
+    res.status(200).json({
+      message: "User found",
+    });
+  } catch (err) {
+    console.error("Error occurred", err);
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
 
-//   try {
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//       return res.status(404).send({ message: "User not found" });
-//     }
+const deleteUser = async (req, res) => {
+  const { email } = req.body;
 
-//     // Compare password
-//     const isPasswordValid = await bcrypt.compare(password, user.password);
-//     if (!isPasswordValid) {
-//       return res.status(401).send({ message: "Invalid password" });
-//     }
-//     res.status(200).json({
-//       message: "Authentication successful",
-//     });
-//   } catch (err) {
-//     console.error("Error logging in", err);
-//     res.status(500).send({ message: "Internal server error" });
-//   }
-// };
-//**************************** */
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+
+  try {
+    // Logika za brisanje korisnika iz MongoDB-a
+    await User.deleteOne({ email });
+    res.status(200).json({ message: "Account deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to delete account" });
+  }
+};
 
 const register = async (req, res) => {
   try {
@@ -147,4 +155,6 @@ module.exports = {
   register,
   verifyEmail,
   finishRegistration,
+  checkUserExistence,
+  deleteUser,
 };

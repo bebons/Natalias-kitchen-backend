@@ -46,7 +46,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/api/upload", imgUploadRoute);
 
-// Delete user route
+// // Delete user route
 // const serviceAccount = require(path.join(
 //   __dirname,
 //   "./config/firebase-adminsdk.json"
@@ -82,6 +82,7 @@ app.use("/api/upload", imgUploadRoute);
 // async function deleteAllUsers() {
 //   try {
 //     // Dohvata do 1000 korisnika u jednom pozivu
+//     await User.deleteMany({});
 //     const listUsersResult = await admin.auth().listUsers(1000);
 //     const userIds = listUsersResult.users.map((user) => user.uid);
 
