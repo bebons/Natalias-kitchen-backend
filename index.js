@@ -390,7 +390,6 @@ io.on("connection", async (socket) => {
 function getReceiverSocketId(userId) {
   return userSocketMap[userId];
 }
-module.exports = { getReceiverSocketId };
 // MongoDB connection
 async function main() {
   try {
