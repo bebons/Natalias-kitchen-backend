@@ -4,6 +4,8 @@ const JWT_SECRET = process.env.JWT_SECRET_KEY;
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const sendEmail = require("../middleware/sendEmail");
+const fs = require("fs");
+const path = require("path");
 
 const adminLogin = async (req, res) => {
   const { username, password } = req.body;
@@ -71,10 +73,11 @@ const deleteUser = async (req, res) => {
 
 const register = async (req, res) => {
   try {
+    const { email, name } = req.body;
     const { error } = validate(req.body);
-    const { email } = req.body;
     console.log(req.body);
     if (error) {
+      console.log(error);
       return res.status(400).send({ message: error.details[0].message });
     }
     let user = await User.findOne({ email });
@@ -87,6 +90,7 @@ const register = async (req, res) => {
 
     user = await new UnverifiedUser({
       email,
+      name,
       verificationToken,
     }).save();
 
@@ -115,6 +119,7 @@ const verifyEmail = async (req, res) => {
         .send({ message: "Invalid or expired verification link" });
     }
     res.status(200).send({
+      name: unverifiedUser.name,
       email: unverifiedUser.email,
       message: "Email verified successfully",
     });
@@ -137,6 +142,7 @@ const finishRegistration = async (req, res) => {
     }
 
     await new User({
+      name: unverifiedUser.name,
       email: unverifiedUser.email,
     }).save();
 
@@ -150,6 +156,117 @@ const finishRegistration = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}, "email name profilePicture");
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching users." });
+  }
+};
+
+const updateName = async (req, res) => {
+  const email = req.user.email; // Email iz Firebase tokena
+  const newName = req.body.name;
+
+  try {
+    // Pretpostavljam da koristiš Mongoose za korisničke podatke
+    const user = await User.findOneAndUpdate(
+      { email: email }, // Pretpostavljamo da koristiš `firebaseUid` kao identifikator korisnika
+      { name: newName },
+      { new: true } // Vraća ažurirani dokument
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ message: "Name updated successfully", user });
+  } catch (err) {
+    res.status(500).json({ message: "Error updating user name", error: err });
+  }
+};
+const updateImage = async (req, res) => {
+  const email = req.user.email; // Preuzet iz `verifyUserToken` middleware
+
+  if (!req.file) {
+    return res.status(400).json({ message: "No image provided." });
+  }
+
+  const imagePath = `/uploads/${req.file.filename}`; // Putanja nove slike
+
+  try {
+    // Pronalaženje korisnika po email-u
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Brisanje stare slike, ako postoji
+    if (user.profilePicture) {
+      const oldImagePath = path.join(__dirname, "../../", user.profilePicture);
+      fs.unlink(oldImagePath, (err) => {
+        if (err) {
+          console.error("Error deleting old image:", err);
+        }
+      });
+    }
+
+    // Ažuriranje slike korisnika
+    user.profilePicture = imagePath;
+    await user.save();
+
+    res.status(200).json({
+      message: "Profile image updated successfully.",
+      user,
+    });
+  } catch (err) {
+    console.error("Error updating profile image:", err);
+    res.status(500).json({ message: "Failed to update profile image." });
+  }
+};
+const getProfileImage = async (req, res) => {
+  try {
+    // Preuzimanje korisničkog ID-a iz middleware-a za autentifikaciju
+    const email = req.user.email;
+
+    // Pretraživanje korisnika u bazi
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Vraćanje URL-a slike korisnika
+    res.status(200).json({ profilePicture: user.profilePicture || null });
+  } catch (error) {
+    console.error("Error fetching profile image:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+const getUserData = async (req, res) => {
+  const email = req.query.email || req.user.email; // Email preuzet iz query stringa
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "User data",
+      profilePicture: user.profilePicture,
+      email: email,
+      name: user.name,
+      joinedAt: user.createdAt,
+      _id: user._id,
+    });
+  } catch (err) {
+    console.error("Error occurred", err);
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   adminLogin,
   register,
@@ -157,4 +274,9 @@ module.exports = {
   finishRegistration,
   checkUserExistence,
   deleteUser,
+  getAllUsers,
+  updateName,
+  updateImage,
+  getProfileImage,
+  getUserData,
 };

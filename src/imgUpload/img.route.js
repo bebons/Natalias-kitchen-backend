@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
+const verifyAdminToken = require("../middleware/verifyAdminToken");
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Ruta za upload
-router.post("/", upload.single("image"), (req, res) => {
+router.post("/", verifyAdminToken, upload.single("image"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "Slika nije poslata." });
   }

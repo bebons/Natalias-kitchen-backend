@@ -1,15 +1,38 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    profilePicture: {
+      type: String,
+      default: "",
+    },
+    friends: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const unverifiedUserSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
   },
-});
-
-const unverifiedUserSchema = new mongoose.Schema({
-  email: {
+  name: {
     type: String,
     required: true,
   },
@@ -35,16 +58,10 @@ const adminSchema = new mongoose.Schema({
   },
 });
 
-// userSchema.methods.generateAuthToken = function () {
-//   const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET_KEY, {
-//     expiresIn: "1h",
-//   });
-//   return token;
-// };
-
 const validate = (data) => {
   const schema = Joi.object({
     email: Joi.string().email().required().label("Email"),
+    name: Joi.string().min(3).max(30).required().label("Name"),
   });
   return schema.validate(data);
 };

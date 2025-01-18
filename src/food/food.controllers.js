@@ -1,4 +1,6 @@
 const Food = require("./food.model");
+const fs = require("fs");
+const path = require("path");
 
 const postFood = async (req, res) => {
   try {
@@ -59,6 +61,11 @@ const deleteFood = async (req, res) => {
     if (!deletedFood) {
       res.status(404).send({ messsage: "Food not found" });
     }
+    // Delete the image file if it exists
+    // const imagePath = `../../../frontend/src/assets/food/${deletedFood.coverImage}`;
+    // if (fs.existsSync(imagePath)) {
+    //   fs.unlinkSync(imagePath); // Delete the file
+    // }
     res.status(200).send({
       message: "Food deleted successfully",
       food: deletedFood,
