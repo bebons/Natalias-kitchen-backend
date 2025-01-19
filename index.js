@@ -41,7 +41,9 @@ const userSocketMap = {}; // { userId: socketId }
 let usersInChat = {}; // Ovdje ćemo pratiti ko je u četu sa kojim korisnicima
 let usersInGroupChat = [];
 io.on("connection", async (socket) => {
+  console.log(socket.id, socket);
   const token = socket.handshake.auth.token; // Dobijanje tokena iz handshake-a
+  console.log(token);
   if (!token) {
     socket.disconnect(); // Ako nema tokena, isključi korisnika
     return;
