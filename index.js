@@ -23,6 +23,7 @@ const corsOptions = {
   origin: [
     "http://localhost:5173", // Localhost for development
     "https://natalias-kitchen-frontend.vercel.app", // Vercel URL for production
+    "wss://natalias-kitchen-backend.vercel.app", // WebSocket server
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -432,7 +433,6 @@ const messagesRoute = require("./src/messages/message.router");
 const Message = require("./src/messages/message.model");
 const GroupMessage = require("./src/messages/groupMessage.model");
 const { User } = require("./src/users/user.model");
-const { ideahub } = require("googleapis/build/src/apis/ideahub");
 
 app.use("/api/food", foodRoutes);
 app.use("/api/orders", orderRoutes);
